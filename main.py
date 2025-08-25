@@ -1,25 +1,28 @@
-import os
 from fastapi import FastAPI
 import subprocess
 import json
 
 app = FastAPI()
 
-COOKIES_PATH = "cookies.txt"  # Render mounts secret files in project root
+@app.get("/")
+def root():
+    return {"message": "Video Downloader API is running!"}
 
 @app.get("/download")
 def download_video(url: str):
     try:
+        # Run yt-dlp
         result = subprocess.run(
-            ["yt-dlp", "-j", "--cookies", COOKIES_PATH, url],
-            text=True,
-            capture_output=True
-        )
+    ["yt-dlp", "-j", "--cookies", "cookies.txt", url],
+    text=True,
+    capture_output=True
+)
 
         if result.returncode != 0:
-            return {"error": result.stderr.strip()}
+            return {"error": result.stderr}
 
         info = json.loads(result.stdout)
+
         return {
             "title": info.get("title"),
             "thumbnail": info.get("thumbnail"),
