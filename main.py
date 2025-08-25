@@ -12,9 +12,11 @@ def root():
 def download_video(url: str):
     try:
         # Run yt-dlp to fetch video metadata
-        result = subprocess.check_output(
-            ["yt-dlp", "-j", url], text=True
-        )
+        result = subprocess.run(
+    ["yt-dlp", "-j", "--cookies", "cookies.txt", url],
+    text=True,
+    capture_output=True
+)
         info = json.loads(result)
 
         # Return a direct video URL + title
